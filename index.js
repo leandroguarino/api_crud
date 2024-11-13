@@ -16,15 +16,32 @@ app.post('/body-builder', (req, res) => {
 })
 
 app.put('/body-builder/:cpf', (req, res) => {
-    res.send("Atualizou")
+  let cpf = req.params.cpf
+  for(let i=0; i < clientes.length; i++){
+    let cliente = clientes[i]
+    if (cliente.cpf == cpf){
+      clientes[i] = req.body 
+      //substitui o bodyBuilder pelos dados enviados no body
+      res.send("Atualizou")
+    }
+  }
+  throw new Error("Body builder nao encontrado")
 })
 
 app.delete('/body-builder/:cpf', (req, res) => {
-    res.send("Deletou")
+  let cpf = req.params.cpf
+  for(let i = 0; i < clientes.length; i++){
+      let cliente = clientes[i]
+      if (cliente.cpf == cpf){
+          clientes.splice(i, 1)
+          res.send("Deletou")        
+      }
+  }
+  throw new Error("Cliente nao encontrado")
 })
 
 app.get('/body-builder', (req, res) => {
-  res.send('Recreio')
+  res.json(clientes)
 })
 
 app.listen(port, () => {
