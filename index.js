@@ -41,7 +41,17 @@ app.delete('/body-builder/:cpf', (req, res) => {
 })
 
 app.get('/body-builder', (req, res) => {
-  res.json(clientes)
+  let busca = req.query.busca
+  let clientesFiltrados
+  if (busca){ //se a busca for diferente de vazio
+    clientesFiltrados = clientes.filter((cliente) => {
+      return cliente.nome.toLowerCase().includes(busca.toLowerCase())
+      || cliente.cpf.toLowerCase().includes(busca.toLowerCase())
+    })
+  }else{
+    clientesFiltrados = clientes
+  }
+  res.json(clientesFiltrados)
 })
 
 app.listen(port, () => {
