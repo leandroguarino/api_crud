@@ -1,5 +1,6 @@
 const express = require('express')
 const cors = require('cors')
+const BodyBuilder = require('./src/bodybuilder/bodybuilder.entity')
 const app = express()
 app.use(cors())
 const port = 3000
@@ -8,9 +9,21 @@ app.use(express.json())
 //banco de dados de clientes
 var clientes = []
 
+var academias = [
+  { id: 1, nome: "Academia 1", telefone: "123456789" },
+  { id: 2, nome: "Academia 2", telefone: "987654321" }
+]
+
 app.post('/body-builder', (req, res) => {
-    console.log(req.body)
-    const bodyBuilder = req.body //receber o bodyBuilder, que é um objeto JSON que vem do front-end
+    const data = req.body //receber o bodyBuilder, que é um objeto JSON que vem do front-end
+
+    const idAcademia = data.idAcademia
+    const gym = academias.find((academia) => academia.id == idAcademia)
+
+    let bodyBuilder = new BodyBuilder(data.cpf, data.nome, data.peso, data.altura, data.dataNascimento, data.sapato, gym)
+
+    // gym.bodyBuilders.push(bodyBuilder)
+
     clientes.push(bodyBuilder) //adicionar o bodyBuiler no banco de dados
     res.send("Cadastrou")
 })
@@ -20,7 +33,13 @@ app.put('/body-builder/:cpf', (req, res) => {
   for(let i=0; i < clientes.length; i++){
     let cliente = clientes[i]
     if (cliente.cpf == cpf){
-      clientes[i] = req.body 
+      const data = req.body
+
+      const idAcademia = data.idAcademia
+      const gym = academias.find((academia) => academia.id == idAcademia)
+
+      let bodyBuilder = new BodyBuilder(data.cpf, data.nome, data.peso, data.altura, data.dataNascimento, data.sapato, gym)
+      clientes[i] = bodyBuilder
       //substitui o bodyBuilder pelos dados enviados no body
       res.send("Atualizou")
     }
@@ -52,6 +71,10 @@ app.get('/body-builder', (req, res) => {
     clientesFiltrados = clientes
   }
   res.json(clientesFiltrados)
+})
+
+app.get("/gym", (req, res) => {
+  res.json(academias)
 })
 
 app.listen(port, () => {
